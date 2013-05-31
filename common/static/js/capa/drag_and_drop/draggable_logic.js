@@ -343,50 +343,26 @@ return {
         }
     },
 
-    // Go through all of the draggables subtract 1 from the z-index
-    // of all whose z-index is higher than the old z-index of the
-    // current element. After, set the z-index of the current
-    // element to 1 + N (where N is the number of draggables - i.e.
-    // the highest z-index possible).
-    //
     // This will make sure that after releasing a draggable, it
     // will be on top of all of the other draggables. Also, the
     // ordering of the visibility (z-index) of the other draggables
     // will not change.
     'correctZIndexes': function () {
-        var c1, highestZIndex;
+        var _this = this,
+            highestZIndex = -10000;
 
-        highestZIndex = -10000;
-        if (this.state.config.individualTargets === true) {
-            if (this.onTarget.draggableList.length > 0) {
-                highestZIndex = this.onTarget.zIndex;
-
-                for (c1 = 0; c1 < this.onTarget.draggableList.length; c1 += 1) {
-                    if (
-                        (this.onTarget.draggableList[c1].zIndex > highestZIndex) &&
-                        (this.onTarget.draggableList[c1].zIndex !== 1000)
-                    ) {
-                        highestZIndex = this.onTarget.draggableList[c1].zIndex;
-                    }
-                }
-            } else {
-                highestZIndex = 0;
+        $.each(this.state.draggables, function (index, draggable) {
+            if (
+                (draggable.uniqueId != _this.uniqueId) &&
+                (draggable.zIndex > highestZIndex) &&
+                (draggable.zIndex !== 1000)
+            ) {
+                highestZIndex = draggable.zIndex;
             }
-        } else {
-            for (c1 = 0; c1 < this.state.draggables.length; c1++) {
-                if (this.inContainer === false) {
-                    if (
-                        (this.state.draggables[c1].zIndex > highestZIndex) &&
-                        (this.state.draggables[c1].zIndex !== 1000)
-                    ) {
-                        highestZIndex = this.state.draggables[c1].zIndex;
-                    }
-                }
-            }
-        }
+        });
 
         if (highestZIndex === -10000) {
-            highestZIndex = 0;
+            highestZIndex = 1;
         }
 
         this.zIndex = highestZIndex + 1;
