@@ -3,7 +3,7 @@ define(['logme', 'update_input', 'targets'], function (logme, updateInput, Targe
 return {
     'moveDraggableTo': function (moveType, target, funcCallback) {
         var self = this,
-            container = (this.originalConfigObj.icon.length) ? this.labelEl 
+            container = (this.originalConfigObj.icon.length) ? this.labelEl
                                                              : this.iconEl,
             offset, adjustLabelEl;
 
@@ -91,7 +91,7 @@ return {
                 'padding-right': 8,
                 'border': '1px solid black'
             });
-            
+
             if (!this.originalConfigObj.isMathJax) {
                 adjustLabelEl.call(this);
             }
@@ -111,7 +111,7 @@ return {
                 this.iconEl.html(this.originalConfigObj.label);
             }
         }
-        
+
         if (moveType === 'target') {
             target.addDraggable(this);
         } else {
@@ -132,15 +132,15 @@ return {
         if ($.isFunction(funcCallback) === true) {
             funcCallback();
         }
-        
+
         if (this.originalConfigObj.isMathJax) {
             MathJax.Hub.Queue(
                 ["Typeset", MathJax.Hub, container[0]],
                 [function(){
-                
+
                     if (self.labelEl !== null) {
                         adjustLabelEl.call(self);
-                    }                    
+                    }
 
                     container
                     .children()
@@ -165,8 +165,8 @@ return {
                 }]
             );
         }
-        
-        
+
+
     },
 
     // At this point the mouse was realeased, and we need to check
@@ -357,9 +357,10 @@ return {
         var c1, highestZIndex;
 
         highestZIndex = -10000;
-
         if (this.state.config.individualTargets === true) {
             if (this.onTarget.draggableList.length > 0) {
+                highestZIndex = this.onTarget.zIndex;
+
                 for (c1 = 0; c1 < this.onTarget.draggableList.length; c1 += 1) {
                     if (
                         (this.onTarget.draggableList[c1].zIndex > highestZIndex) &&
@@ -402,7 +403,7 @@ return {
     'moveBackToSlider': function () {
         var c1,
             posTop,
-            container = (this.originalConfigObj.icon.length) ? this.labelEl 
+            container = (this.originalConfigObj.icon.length) ? this.labelEl
                                                              : this.iconEl;
 
         Targets.destroyTargetField(this);
@@ -434,18 +435,18 @@ return {
                 'height': this.iconHeightSmall
             });
         }
-        
+
         if(!this.state.config.separateLabels){
             if(this.state.config.autoResize){
                 posTop = ((this.labelEl !== null && !!this.iconImgEl) ? 37.5 : 50) - 0.5 * this.iconHeightSmall;
-                
+
             } else {
                 posTop = ((!!this.iconImgEl) ? 37.5 : 50) - 0.5 * this.iconHeightSmall;
             }
         } else {
             posTop = (this.iconImgEl) ? ((this.labelEl !== null || !this.state.config.autoResize) ? 37.5 : 50) - 0.5 * this.iconHeightSmall : 70;
         }
-        
+
         this.iconEl.css({
             'border': 'none',
             'background-color': 'transparent',
@@ -500,11 +501,11 @@ return {
         }
 
         this.inContainer = true;
-        
+
         if (this.originalConfigObj.isMathJax) {
             MathJax.Hub.Queue(
                 ["Typeset", MathJax.Hub, container[0]],
-                [function(){                    
+                [function(){
                     container
                     .children()
                     .filter('span, div')
