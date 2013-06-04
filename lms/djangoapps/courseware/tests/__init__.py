@@ -94,6 +94,9 @@ class BaseTestResponseType(ModuleStoreTestCase):
 
         self.assertTrue(all(self.login_statuses))
 
+        # for form submit of capa problem
+        self.answer_key_prefix = 'input_' + self.item_module.location.html_id() + '_'
+
     def get_url(self, dispatch):
         """Return item url with dispatch."""
         return reverse(

@@ -11,8 +11,8 @@ class TestDraganddrop(BaseTestResponseType):
     """Integration test for draganddropresponse."""
     answer = """
 correct_answer = [
-        {'draggables': ['1', '2'],
-        'targets': ['t2', 't3', 't4' ],
+        {'draggables': ['d_1', 'd_2'],
+        'targets': ['t_2', 't_3', 't_4' ],
         'rule':'anyof'
         }]
 if draganddrop.grade(submission[0], correct_answer):
@@ -24,18 +24,10 @@ else:
     RESPONSETYPE_as_str = DraganddropResponseXmlFactory().build_xml(answer=answer)
 
     def test_problem_save(self):
-        """TODO"""
+        """Checks that save is working."""
         user_input = json.dumps([
             {'p': 'p_l'},
-            {'p': 'p_r'},
-            {'s': 's_l'},
-            {'s': 's_r'},
-            {'up': {'1': {'p': 'p_l'}}},
-            {'up': {'3': {'p': 'p_l'}}},
-            {'up': {'1': {'p': 'p_r'}}},
-            {'up': {'3': {'p': 'p_r'}}},
-            {'up_and_down': {'1': {'s': 's_l'}}},
-            {'up_and_down': {'1': {'s': 's_r'}}}
+            {'p': 'p_r'}
         ])
         user = self.users[0]
         response = self.clients[user.username].post(
@@ -47,29 +39,36 @@ else:
         users_state = json.loads(response.content)
         self.assertTrue(users_state['success'])
 
-    def test_problem_check(self):
-        """TODO"""
+    def test_problem_check_incorrect(self):
+        """Checks sure that grader can see incorrent input."""
         user_input = json.dumps([
             {'p': 'p_l'},
-            {'p': 'p_r'},
-            {'s': 's_l'},
-            {'s': 's_r'},
-            {'up': {'1': {'p': 'p_l'}}},
-            {'up': {'3': {'p': 'p_l'}}},
-            {'up': {'1': {'p': 'p_r'}}},
-            {'up': {'3': {'p': 'p_r'}}},
-            {'up_and_down': {'1': {'s': 's_l'}}},
-            {'up_and_down': {'1': {'s': 's_r'}}}
+            {'p': 'p_r'}
         ])
         user = self.users[0]
         # import ipdb; ipdb.set_trace()
-        answer_key_prefix = 'input_i4x-MITx-{}-problem-{}_'.format('999', 'Problem_2')
+
         response = self.clients[user.username].post(
             self.get_url('problem_check'),
-            {answer_key_prefix + '2_1': user_input},
+            {self.answer_key_prefix + '2_1': user_input},
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        import ipdb; ipdb.set_trace()
-        users_state = json.loads(response.content)
 
-        return users_state
+        users_state = json.loads(response.content)
+        self.assertEqual(users_state['success'], 'incorrect')
+
+    def test_problem_check_correct(self):
+        """Checks that grader can see correct answer."""
+        user_input = json.dumps([
+            {'d_1': 't_2'},
+            {'d_2': 't_4'}
+        ])
+        user = self.users[0]
+        response = self.clients[user.username].post(
+            self.get_url('problem_check'),
+            {self.answer_key_prefix + '2_1': user_input},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+
+        users_state = json.loads(response.content)
+        self.assertEqual(users_state['success'], 'correct')

@@ -846,7 +846,7 @@ class DraganddropResponseXmlFactory(CustomResponseXMLFactory):
         input_element.set("one_per_target", str(one_per_target))
         input_element.set("img", "/static/image.jpg")
 
-        number_of_draggables = 2
+        number_of_draggables = 3
         for i in range(number_of_draggables):
             draggable_element = etree.Element("draggable")
             draggable_element.set("id", "d_" + str(i))
