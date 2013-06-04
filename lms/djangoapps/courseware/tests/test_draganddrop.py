@@ -46,5 +46,5 @@ class TestDraganddrop(BaseTestResponseType):
         )
 
         users_state = json.loads(response.content)
-        import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
         return users_state
