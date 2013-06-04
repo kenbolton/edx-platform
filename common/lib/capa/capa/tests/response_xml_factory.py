@@ -842,7 +842,7 @@ class DraganddropResponseXmlFactory(CustomResponseXMLFactory):
         one_per_target = kwargs.get("one_per_target", True)
 
         # Create the <draganddropinput> element
-        input_element = etree.Element("draganddrop")
+        input_element = etree.Element("drag_and_drop_input")
         input_element.set("one_per_target", str(one_per_target))
         input_element.set("img", "/static/image.jpg")
 
