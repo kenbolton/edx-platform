@@ -779,3 +779,88 @@ class SymbolicResponseXMLFactory(ResponseXMLFactory):
 
     def create_input_element(self, **kwargs):
         return ResponseXMLFactory.textline_input_xml(**kwargs)
+
+
+class DraganddropResponseXmlFactory(CustomResponseXMLFactory):
+    """ Factory for producing <customresponse> XML trees
+    with draganddrop input"""
+
+    def create_response_element(self, **kwargs):
+        """ Create a <customresponse> XML element.
+
+        Uses **kwargs:
+
+        *cfn*: the Python code to run.  Can be inline code,
+        or the name of a function defined in earlier <script> tags.
+
+        Should have the form: cfn(expect, answer_given, student_answers)
+        where expect is a value (see below),
+        answer_given is a single value (for 1 input)
+        or a list of values (for multiple inputs),
+        and student_answers is a dict of answers by input ID.
+
+        *expect*: The value passed to the function cfn
+
+        *answer*: Inline script that calculates the answer
+        """
+
+        # Retrieve **kwargs
+        cfn = kwargs.get('cfn', None)
+        expect = kwargs.get('expect', None)
+        answer = kwargs.get('answer', None)
+        options = kwargs.get('options', None)
+        cfn_extra_args = kwargs.get('cfn_extra_args', None)
+
+        # Create the response element
+        response_element = etree.Element("customresponse")
+
+        if cfn:
+            response_element.set('cfn', str(cfn))
+
+        if expect:
+            response_element.set('expect', str(expect))
+
+        if answer:
+            answer_element = etree.SubElement(response_element, "answer")
+            answer_element.text = str(answer)
+
+        if options:
+            response_element.set('options', str(options))
+
+        if cfn_extra_args:
+            response_element.set('cfn_extra_args', str(cfn_extra_args))
+
+        return response_element
+
+    def create_input_element(self, **kwargs):
+        """ Create the <draganddrop_input> element.
+        Uses **kwargs
+        TODO - more docs on parameters
+        """
+
+        # Get the **kwargs
+        one_per_target = kwargs.get("one_per_target", True)
+
+        # Create the <draganddropinput> element
+        input_element = etree.Element("draganddrop")
+        input_element.set("one_per_target", str(one_per_target))
+        input_element.set("img", "/static/image.jpg")
+
+        number_of_draggables = 2
+        for i in range(number_of_draggables):
+            draggable_element = etree.Element("draggable")
+            draggable_element.set("id", "d_" + str(i))
+            draggable_element.set("label", "label_" + str(i))
+            input_element.append(draggable_element)
+
+        number_of_targets = 2 * number_of_draggables
+        for i in range(number_of_targets):
+            target_element = etree.Element("target")
+            target_element.set("id", "t_" + str(i))
+            target_element.set("x",  str(i * 40))
+            target_element.set("y",  str(i))
+            target_element.set("w",  str(32))
+            target_element.set("h",  str(32))
+            input_element.append(target_element)
+
+        return input_element
